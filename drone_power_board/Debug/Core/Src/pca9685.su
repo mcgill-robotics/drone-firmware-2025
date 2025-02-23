@@ -1,0 +1,7 @@
+../Core/Src/pca9685.c:7:13:PCA9685_WriteReg	32	static
+../Core/Src/pca9685.c:13:16:PCA9685_ReadReg	32	static
+../Core/Src/pca9685.c:21:6:PCA9685_Reset	16	static
+../Core/Src/pca9685.c:26:6:PCA9685_Init	16	static
+../Core/Src/pca9685.c:33:6:PCA9685_SetPWMFreq	32	static
+../Core/Src/pca9685.c:47:6:PCA9685_SetPWM	48	static
+../Core/Src/pca9685.c:53:6:PCA9685_SetAllServos	24	static
