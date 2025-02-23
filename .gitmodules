@@ -1,0 +1,6 @@
+[submodule "drone_power_board/Core/Inc/libcanard"]
+	path = drone_power_board/Core/Inc/libcanard
+	url = https://github.com/DroneCAN/libcanard
+[submodule "drone_power_board/Middlewares/libcanard"]
+	path = drone_power_board/Middlewares/libcanard
+	url = https://github.com/DroneCAN/libcanard
