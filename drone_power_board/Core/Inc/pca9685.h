@@ -26,10 +26,11 @@ typedef struct {
     float freq;
 } PCA9685_HandleTypeDef;
 
-void PCA9685_Init(PCA9685_HandleTypeDef* pca);
+void PCA9685_Init(PCA9685_HandleTypeDef* pca, float freq);
 void PCA9685_SetPWMFreq(PCA9685_HandleTypeDef* pca, float freq);
 void PCA9685_SetPWM(PCA9685_HandleTypeDef* pca, uint8_t channel, uint16_t on, uint16_t off);
 void PCA9685_Reset(PCA9685_HandleTypeDef* pca);
 void PCA9685_SetPWMFreq(PCA9685_HandleTypeDef* pca, float freq);
+void PCA9685_SetPWMOff(PCA9685_HandleTypeDef* pca, uint8_t channel);
 
 #endif

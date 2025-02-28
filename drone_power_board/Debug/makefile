@@ -60,8 +60,8 @@ all: main-build
 main-build: drone_power_board.elf secondary-outputs
 
 # Tool invocations
-drone_power_board.elf drone_power_board.map: $(OBJS) $(USER_OBJS) C:\Users\vince\Documents\GitHub\drone-firmware-2025\drone_power_board\STM32L431KCUX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "drone_power_board.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\vince\Documents\GitHub\drone-firmware-2025\drone_power_board\STM32L431KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="drone_power_board.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+drone_power_board.elf drone_power_board.map: $(OBJS) $(USER_OBJS) C:\Users\Vincent\Documents\GitHub\drone-firmware-2025\drone_power_board\STM32L431KCUX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "drone_power_board.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Vincent\Documents\GitHub\drone-firmware-2025\drone_power_board\STM32L431KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="drone_power_board.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

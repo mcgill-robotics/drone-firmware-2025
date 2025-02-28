@@ -104,7 +104,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   pca.hi2c = &hi2c1;
   pca.address = PCA9685_DEFAULT_ADDRESS;
-  PCA9685_Init(&pca);
+  PCA9685_Init(&pca, 50.0);
   /* USER CODE END 2 */
 
   /* Infinite loop */

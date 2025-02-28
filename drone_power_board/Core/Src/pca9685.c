@@ -23,20 +23,22 @@ void PCA9685_Reset(PCA9685_HandleTypeDef* pca) {
 }
 
 // Initialize PCA9685
-void PCA9685_Init(PCA9685_HandleTypeDef* pca) {
+void PCA9685_Init(PCA9685_HandleTypeDef* pca, float freq) {
     PCA9685_Reset(pca);
     HAL_Delay(10); // Wait for reset
-    PCA9685_SetPWMFreq(pca, 50); // Default 50Hz (for servos)
+    PCA9685_SetPWMFreq(pca, freq); // Use custom frequency
 }
 
 // Set PWM Frequency
 void PCA9685_SetPWMFreq(PCA9685_HandleTypeDef* pca, float freq) {
-	pca->freq = (freq < 0.0) ? freq * -1.0 : freq;
+	if (freq < 1.0) freq = 1.0;  // Prevent invalid low frequencies
+	if (freq > 1526.0) freq = 1526.0; // Limit to max frequency
+	pca->freq = freq;
     uint8_t oldmode = PCA9685_ReadReg(pca, PCA9685_MODE1);
     uint8_t newmode = (oldmode & 0x7F) | 0x10; // Sleep mode
     PCA9685_WriteReg(pca, PCA9685_MODE1, newmode);
 
-    uint8_t prescale = (uint8_t)(round(25000000 / (4096 * pca->freq)) - 1);
+    uint8_t prescale = (uint8_t)(round(25000000.0 / (4096.0 * pca->freq)) - 1);
     PCA9685_WriteReg(pca, PCA9685_PRESCALE, prescale);
     PCA9685_WriteReg(pca, PCA9685_MODE1, oldmode);
     HAL_Delay(5);
@@ -44,9 +46,9 @@ void PCA9685_SetPWMFreq(PCA9685_HandleTypeDef* pca, float freq) {
 }
 
 // Set PWM for a specific channel
-void PCA9685_SetPWM(PCA9685_HandleTypeDef* pca, uint8_t channel, uint16_t on, uint16_t off) {
-    uint8_t reg = PCA9685_LED0_ON_L + 4 * channel;
-    uint8_t data[4] = { on & 0xFF, on >> 8, off & 0xFF, off >> 8 };
+void PCA9685_SetPWM(PCA9685_HandleTypeDef* pca, uint16_t channel, uint16_t on, uint16_t off) {
+    uint16_t reg = PCA9685_LED0_ON_L + 4 * channel;
+    uint16_t data[4] = { on & 0xFF, on >> 8, off & 0xFF, off >> 8 };
     HAL_I2C_Mem_Write(pca->hi2c, (pca->address << 1), reg, 1, data, 4, HAL_MAX_DELAY);
 }
 
@@ -54,9 +56,13 @@ void PCA9685_SetAllServos(PCA9685_HandleTypeDef* pca, uint16_t pwm_values[16]) {
     for (uint8_t channel = 0; channel < 16; channel++) {
         uint16_t pulse = pwm_values[channel]; // Pulse width in microseconds (1000 - 2000)
 
-        uint16_t off_value = (pulse * 4096) / ((uint32_t)(1000000/pca->freq));
+        uint16_t off_value = (pulse * 4096) / (1000000 / pca->freq);
 
         // Set the PWM value for the current channel
         PCA9685_SetPWM(pca, channel, 0, off_value);
     }
+}
+
+void PCA9685_SetPWMOff(PCA9685_HandleTypeDef* pca, uint8_t channel) {
+    PCA9685_SetPWM(pca, channel, 0, 0);
 }

@@ -29,11 +29,4 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>Core/Src/canard.c</name>
-			<type>1</type>
-			<location>C:/Users/vince/Documents/GitHub/drone-firmware-2025/drone_power_board/Middlewares/libcanard/canard.c</location>
-		</link>
-	</linkedResources>
 </projectDescription>
