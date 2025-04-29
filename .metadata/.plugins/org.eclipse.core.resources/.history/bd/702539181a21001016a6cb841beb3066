@@ -1,0 +1,87 @@
+/*
+ * ads124s06.c
+ *
+ *  Created on: Apr 24, 2025
+ *      Author: vince
+ */
+
+
+// --- ads124s06.c ---
+#include "ads124s06.h"
+
+static void ADS124_Select(ADS124_HandleTypeDef *h) {
+    HAL_GPIO_WritePin(h->cs_port, h->cs_pin, GPIO_PIN_RESET);
+}
+static void ADS124_Unselect(ADS124_HandleTypeDef *h) {
+    HAL_GPIO_WritePin(h->cs_port, h->cs_pin, GPIO_PIN_SET);
+}
+
+void ADS124_Init(ADS124_HandleTypeDef *h,
+                 SPI_HandleTypeDef *hspi,
+                 GPIO_TypeDef *cs_port, uint16_t cs_pin)
+{
+    h->hspi    = hspi;
+    h->cs_port = cs_port;
+    h->cs_pin  = cs_pin;
+    ADS124_Unselect(h);
+    // hardware reset
+    ADS124_SendCommand(h, ADS124_CMD_RESET);
+    HAL_Delay(1); // > td(RSSC)
+}
+
+HAL_StatusTypeDef ADS124_SendCommand(ADS124_HandleTypeDef *h, uint8_t cmd)
+{
+    ADS124_Select(h);
+    HAL_StatusTypeDef st = HAL_SPI_Transmit(h->hspi, &cmd, 1, HAL_MAX_DELAY);
+    ADS124_Unselect(h);
+    return st;
+}
+
+HAL_StatusTypeDef ADS124_WriteRegister(ADS124_HandleTypeDef *h,
+                                       uint8_t start_addr,
+                                       uint8_t *data, uint8_t n_regs)
+{
+    uint8_t hdr[2] = { ADS124_CMD_WREG | (start_addr & 0x0F), n_regs-1 };
+    ADS124_Select(h);
+    HAL_StatusTypeDef st = HAL_SPI_Transmit(h->hspi, hdr, 2, HAL_MAX_DELAY);
+    if (st == HAL_OK) st = HAL_SPI_Transmit(h->hspi, data, n_regs, HAL_MAX_DELAY);
+    ADS124_Unselect(h);
+    return st;
+}
+
+HAL_StatusTypeDef ADS124_ReadRegister(ADS124_HandleTypeDef *h,
+                                      uint8_t start_addr,
+                                      uint8_t *data, uint8_t n_regs)
+{
+    uint8_t hdr[2] = { ADS124_CMD_RREG | (start_addr & 0x0F), n_regs-1 };
+    ADS124_Select(h);
+    HAL_StatusTypeDef st = HAL_SPI_Transmit(h->hspi, hdr, 2, HAL_MAX_DELAY);
+    if (st == HAL_OK) st = HAL_SPI_Receive(h->hspi, data, n_regs, HAL_MAX_DELAY);
+    ADS124_Unselect(h);
+    return st;
+}
+
+HAL_StatusTypeDef ADS124_ReadConversion(ADS124_HandleTypeDef *h, int32_t *out)
+{
+    uint8_t cmd = ADS124_CMD_RDATA;
+    ADS124_Select(h);
+    HAL_StatusTypeDef st = HAL_SPI_Transmit(h->hspi, &cmd, 1, HAL_MAX_DELAY);
+    if (st != HAL_OK) { ADS124_Unselect(h); return st; }
+    uint8_t buf[3];
+    st = HAL_SPI_Receive(h->hspi, buf, 3, HAL_MAX_DELAY);
+    ADS124_Unselect(h);
+    if (st != HAL_OK) return st;
+    int32_t val = ((int32_t)buf[0] << 16) |
+                  ((int32_t)buf[1] <<  8) |
+                  ((int32_t)buf[2]      );
+    if (val & 0x800000) val |= 0xFF000000;
+    *out = val;
+    return HAL_OK;
+}
+
+HAL_StatusTypeDef ADS124_Reset(ADS124_HandleTypeDef *h)
+{
+    HAL_StatusTypeDef st = ADS124_SendCommand(h, ADS124_CMD_RESET);
+    HAL_Delay(1);
+    return st;
+}

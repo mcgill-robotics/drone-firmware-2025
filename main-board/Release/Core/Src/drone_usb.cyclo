@@ -1,0 +1,3 @@
+../Core/Src/drone_usb.c:30:6:USB_ParseBuffer	10
+../Core/Src/drone_usb.c:22:9:CDC_Receive_FS	1
+../Core/Src/drone_usb.c:50:6:USB_SendTelemetry	1

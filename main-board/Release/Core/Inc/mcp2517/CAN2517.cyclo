@@ -1,0 +1,37 @@
+../Core/Inc/mcp2517/CANBuffer.h:62:16:void CANBuffer::initWithSize(uint32_t)	4
+../Core/Inc/mcp2517/CANBuffer.h:75:16:bool CANBuffer::append(const CANMessage&)	3
+../Core/Inc/mcp2517/CANBuffer.h:97:16:bool CANBuffer::remove(CANMessage&)	3
+../Core/Inc/mcp2517/CAN2517.cpp:629:6:bool CAN2517::available()	1
+../Core/Inc/mcp2517/CAN2517.cpp:844:6:void CAN2517::assertCS()	1
+../Core/Inc/mcp2517/CAN2517.cpp:850:6:void CAN2517::deassertCS()	1
+../Core/Inc/mcp2517/CAN2517.cpp:176:1:CAN2517::CAN2517(SPI_HandleTypeDef*, GPIO_TypeDef*, uint16_t, GPIO_TypeDef*, uint16_t)	1
+../Core/Inc/mcp2517/CAN2517.cpp:856:6:void CAN2517::writeRegister32Assume_SPI_transaction(uint16_t, uint32_t)	1
+../Core/Inc/mcp2517/CAN2517.cpp:874:10:uint32_t CAN2517::readRegister32Assume_SPI_transaction(uint16_t)	1
+../Core/Inc/mcp2517/CAN2517.cpp:894:6:void CAN2517::writeRegister8Assume_SPI_transaction(uint16_t, uint8_t)	1
+../Core/Inc/mcp2517/CAN2517.cpp:534:6:void CAN2517::appendInControllerTxFIFO(const CANMessage&)	2
+../Core/Inc/mcp2517/CAN2517.cpp:646:6:bool CAN2517::receive(CANMessage&)	2
+../Core/Inc/mcp2517/CAN2517.cpp:669:6:bool CAN2517::dispatchReceivedMessage(tFilterMatchCallBack)	5
+../Core/Inc/mcp2517/CAN2517.cpp:782:6:void CAN2517::transmitInterrupt()	2
+../Core/Inc/mcp2517/CAN2517.cpp:909:9:uint8_t CAN2517::readRegister8Assume_SPI_transaction(uint16_t)	1
+../Core/Inc/mcp2517/CAN2517.cpp:512:6:bool CAN2517::enterInTransmitBuffer(const CANMessage&)	3
+../Core/Inc/mcp2517/CAN2517.cpp:573:6:bool CAN2517::sendViaTXQ(const CANMessage&)	5
+../Core/Inc/mcp2517/CAN2517.cpp:486:6:bool CAN2517::tryToSend(const CANMessage&)	3
+../Core/Inc/mcp2517/CAN2517.cpp:797:6:void CAN2517::receiveInterrupt()	3
+../Core/Inc/mcp2517/CAN2517.cpp:737:6:bool CAN2517::isr_core()	9
+../Core/Inc/mcp2517/CAN2517.cpp:703:8:void CAN2517::poll()	2
+../Core/Inc/mcp2517/CAN2517.cpp:728:8:void CAN2517::isr()	1
+../Core/Inc/mcp2517/CAN2517.cpp:926:6:void CAN2517::writeRegister8(uint16_t, uint8_t)	1
+../Core/Inc/mcp2517/CAN2517.cpp:944:9:uint8_t CAN2517::readRegister8(uint16_t)	1
+../Core/Inc/mcp2517/CAN2517.cpp:963:6:void CAN2517::writeRegister32(uint16_t, uint32_t)	1
+../Core/Inc/mcp2517/CAN2517.cpp:981:10:uint32_t CAN2517::readRegister32(uint16_t)	1
+../Core/Inc/mcp2517/CAN2517.cpp:1000:6:void CAN2517::reset2517FD()	1
+../Core/Inc/mcp2517/CAN2517.cpp:216:10:uint32_t CAN2517::begin(const MCP2517Settings&, void (*)(), const CANFilters&)	31
+../Core/Inc/mcp2517/CAN2517.cpp:205:10:uint32_t CAN2517::begin(const MCP2517Settings&, void (*)())	2
+../Core/Inc/mcp2517/CAN2517.cpp:1020:10:uint32_t CAN2517::errorCounters()	1
+../Core/Inc/mcp2517/CAN2517.cpp:1028:24:CAN2517::OperationMode CAN2517::currentOperationMode()	1
+../Core/Inc/mcp2517/CAN2517.cpp:1035:6:bool CAN2517::recoverFromRestrictedOperationMode()	4
+../Core/Inc/mcp2517/CAN2517.cpp:1059:10:uint32_t CAN2517::diagInfos(int)	1
+../Core/Inc/mcp2517/CAN2517.cpp:1067:6:void CAN2517::gpioSetMode(uint8_t, uint8_t)	6
+../Core/Inc/mcp2517/CAN2517.cpp:1087:6:void CAN2517::gpioWrite(uint8_t, uint8_t)	3
+../Core/Inc/mcp2517/CAN2517.cpp:1101:6:bool CAN2517::gpioRead(uint8_t)	1
+../Core/Inc/mcp2517/CAN2517.cpp:1108:6:void CAN2517::configureGPIO0AsXSTBY()	1

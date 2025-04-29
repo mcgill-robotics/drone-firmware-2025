@@ -1,0 +1,87 @@
+// --- ads124s06.h ---
+#ifndef ADS124S06_H
+#define ADS124S06_H
+
+#include "stm32f4xx_hal.h"
+#include <stdint.h>
+
+/* ADS124S06 SPI command definitions (Table 24) */
+#define ADS124_CMD_NOP        0x00
+#define ADS124_CMD_WAKEUP     0x02
+#define ADS124_CMD_POWERDOWN  0x04
+#define ADS124_CMD_RESET      0x06
+#define ADS124_CMD_START      0x08
+#define ADS124_CMD_STOP       0x0A
+#define ADS124_CMD_RDATA      0x12
+#define ADS124_CMD_RREG       0x20
+#define ADS124_CMD_WREG       0x40
+#define ADS124_CMD_SYOCAL     0x16
+#define ADS124_CMD_SYGCAL     0x17
+#define ADS124_CMD_SFOCAL     0x19
+
+/**
+
+@brief ADS124S06 handle struct (CS tied low externally)
+*/
+typedef struct {
+SPI_HandleTypeDef *hspi;  /**< SPI interface handle */
+} ADS124_HandleTypeDef;
+
+/**
+
+@brief Initialize ADS124S06 (SPI handle, hardware reset)
+
+@note  The CS pin must be held low externally
+*/
+void ADS124_Init(ADS124_HandleTypeDef *h,
+SPI_HandleTypeDef *hspi);
+
+/**
+
+@brief Send a single-byte command (RESET, START, STOP, etc.)
+*/
+HAL_StatusTypeDef ADS124_SendCommand(ADS124_HandleTypeDef *h, uint8_t cmd);
+
+/**
+
+@brief Write consecutive registers
+
+@param start_addr  Register address to start (0–0x0F)
+
+@param data        Pointer to data bytes
+
+@param n_regs      Number of registers to write (max 16)
+*/
+HAL_StatusTypeDef ADS124_WriteRegister(ADS124_HandleTypeDef *h,
+uint8_t start_addr,
+uint8_t *data, uint8_t n_regs);
+
+/**
+
+@brief Read consecutive registers
+
+@param start_addr  Register address to start (0–0x0F)
+
+@param data        Pointer to buffer for read data
+
+@param n_regs      Number of registers to read
+*/
+HAL_StatusTypeDef ADS124_ReadRegister(ADS124_HandleTypeDef *h,
+uint8_t start_addr,
+uint8_t *data, uint8_t n_regs);
+
+/**
+
+@brief Read a single 24-bit conversion via RDATA (no DRDY pin)
+
+@note  Caller should allow conversion time after START
+*/
+HAL_StatusTypeDef ADS124_ReadConversion(ADS124_HandleTypeDef *h, int32_t *out);
+
+/**
+
+@brief Hardware reset via RESET command + delay
+*/
+HAL_StatusTypeDef ADS124_Reset(ADS124_HandleTypeDef *h);
+
+#endif /* ADS124S06_H */

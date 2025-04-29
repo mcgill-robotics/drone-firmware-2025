@@ -1,0 +1,14 @@
+18:56:01 **** Incremental Build of configuration Release for project main-board ****
+make -j16 all 
+arm-none-eabi-g++ "../Core/Inc/mcp2517/CAN2517.cpp" -mcpu=cortex-m4 -std=gnu++14 -DUSE_HAL_DRIVER -DSTM32F401xC -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../USB_DEVICE/App -I../USB_DEVICE/Target -I../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc -Os -ffunction-sections -fdata-sections -fno-exceptions -fno-rtti -fno-use-cxa-atexit -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Inc/mcp2517/CAN2517.d" -MT"Core/Inc/mcp2517/CAN2517.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Inc/mcp2517/CAN2517.o"
+arm-none-eabi-g++ -o "main-board.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/vince/Documents/Github/drone-firmware-2025/main-board/STM32F401RCTX_FLASH.ld" -Wl,-Map="main-board.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
+Finished building target: main-board.elf
+ 
+arm-none-eabi-size  main-board.elf 
+arm-none-eabi-objdump -h -S main-board.elf  > "main-board.list"
+   text	   data	    bss	    dec	    hex	filename
+  19696	    248	   7224	  27168	   6a20	main-board.elf
+Finished building: default.size.stdout
+ 
+Finished building: main-board.list
+ 

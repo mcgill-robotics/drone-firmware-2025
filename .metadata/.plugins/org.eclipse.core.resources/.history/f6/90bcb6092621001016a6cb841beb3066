@@ -1,0 +1,68 @@
+// --- ads124s06.c ---
+#include "ads124s06.h"
+
+void ADS124_Init(ADS124_HandleTypeDef *h, SPI_HandleTypeDef *hspi)
+{
+	h->hspi = hspi;
+	/* Hardware reset: chip select must be low externally */
+	ADS124_SendCommand(h, ADS124_CMD_RESET);
+	HAL_Delay(1); // Wait > td(RSSC)
+}
+
+HAL_StatusTypeDef ADS124_SendCommand(ADS124_HandleTypeDef *h, uint8_t cmd)
+{
+	return HAL_SPI_Transmit(h->hspi, &cmd, 1, HAL_MAX_DELAY);
+}
+
+HAL_StatusTypeDef ADS124_WriteRegister(ADS124_HandleTypeDef *h, uint8_t start_addr, uint8_t *data, uint8_t n_regs)
+{
+	uint8_t hdr[2] = { ADS124_CMD_WREG | (start_addr & 0x0F), n_regs - 1 };
+	HAL_StatusTypeDef st = HAL_SPI_Transmit(h->hspi, hdr, 2, HAL_MAX_DELAY);
+	if (st == HAL_OK) {
+	st = HAL_SPI_Transmit(h->hspi, data, n_regs, HAL_MAX_DELAY);
+	}
+	return st;
+}
+
+HAL_StatusTypeDef ADS124_ReadRegister(ADS124_HandleTypeDef *h, uint8_t start_addr, uint8_t *data, uint8_t n_regs)
+{
+	uint8_t hdr[2] = { ADS124_CMD_RREG | (start_addr & 0x0F), n_regs - 1 };
+	HAL_StatusTypeDef st = HAL_SPI_Transmit(h->hspi, hdr, 2, HAL_MAX_DELAY);
+	if (st == HAL_OK) {
+	st = HAL_SPI_Receive(h->hspi, data, n_regs, HAL_MAX_DELAY);
+	}
+	return st;
+}
+
+HAL_StatusTypeDef ADS124_ReadConversion(ADS124_HandleTypeDef *h, int32_t *out)
+{
+	uint8_t cmd = ADS124_CMD_RDATA;
+	HAL_StatusTypeDef st = HAL_SPI_Transmit(h->hspi, &cmd, 1, HAL_MAX_DELAY);
+	if (st != HAL_OK) return st;
+	uint8_t buf[3];
+	st = HAL_SPI_Receive(h->hspi, buf, 3, HAL_MAX_DELAY);
+	if (st != HAL_OK) return st;
+
+	int32_t val = (int32_t)(buf[0] << 16) | (int32_t)(buf[1] << 8) | buf[2];
+	if (val & 0x800000) val |= 0xFF000000;  // sign-extend
+	printf("CH%u = %ld\r\n", ch, raw_value);
+	*out = val;
+	return HAL_OK;
+}
+
+HAL_StatusTypeDef ADS124_Reset(ADS124_HandleTypeDef *h)
+{
+	HAL_StatusTypeDef st = ADS124_SendCommand(h, ADS124_CMD_RESET);
+	HAL_Delay(1);
+	return st;
+}
+
+void ADS124_SetDataRate(ADS124_HandleTypeDef *h, uint8_t dr_code) {
+    ADS124_WriteRegister(h, ADS124_REG_DATARATE, &dr_code, 1);
+}
+
+void ADS124_SelectChannel(ADS124_HandleTypeDef *h, uint8_t ch) {
+    uint8_t mux = (ch << 4) | 0x08;
+    // PSEL = ch (0…5 → AIN0…AIN5), NSEL = 8 → AINCOM
+    ADS124_WriteRegister(h, ADS124_REG_INPMUX, &mux, 1);
+}

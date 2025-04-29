@@ -1,0 +1,86 @@
+/*
+ * ads124s06.h
+ *
+ *  Created on: Apr 24, 2025
+ *      Author: vince
+ */
+
+#ifndef INC_ADS124S06_H_
+#define INC_ADS124S06_H_
+
+#include "stm32f4xx_hal.h"
+#include <stdint.h>
+
+/* --- Command bytes (first byte; see datasheet Table 24) --- */
+#define ADS124_CMD_NOP        0x00
+#define ADS124_CMD_WAKEUP     0x02
+#define ADS124_CMD_POWERDOWN  0x04
+#define ADS124_CMD_RESET      0x06
+#define ADS124_CMD_START      0x08
+#define ADS124_CMD_STOP       0x0A
+#define ADS124_CMD_RDATA      0x12
+#define ADS124_CMD_RREG       0x20
+#define ADS124_CMD_WREG       0x40
+#define ADS124_CMD_SYOCAL     0x16
+#define ADS124_CMD_SYGCAL     0x17
+#define ADS124_CMD_SFOCAL     0x19
+
+typedef struct {
+    SPI_HandleTypeDef *hspi;
+    GPIO_TypeDef *cs_port;
+    uint16_t      cs_pin;
+    GPIO_TypeDef *drdy_port;
+    uint16_t      drdy_pin;
+} ADS124_HandleTypeDef;
+
+/**
+ * @brief  Initialize ADS124S06 handle (must be called before anything else).
+ * @param  hadc    Pointer to ADS124 handle
+ * @param  hspi    SPI handle (must already be Init’d)
+ * @param  cs_port GPIO port for CS
+ * @param  cs_pin  GPIO pin for CS
+ * @param  drdy_port GPIO port for DRDY
+ * @param  drdy_pin  GPIO pin for DRDY
+ */
+void ADS124_Init(ADS124_HandleTypeDef *hadc,
+                 SPI_HandleTypeDef *hspi,
+                 GPIO_TypeDef *cs_port, uint16_t cs_pin,
+                 GPIO_TypeDef *drdy_port, uint16_t drdy_pin);
+
+/**
+ * @brief  Send a single-byte command (NOP, RESET, START, STOP, etc.)
+ */
+HAL_StatusTypeDef ADS124_SendCommand(ADS124_HandleTypeDef *hadc, uint8_t cmd);
+
+/**
+ * @brief  Write one or more registers
+ * @param  start_addr  Register address to start (0–0x0F)
+ * @param  data        Pointer to data bytes
+ * @param  n_regs      Number of registers to write (max 16)
+ */
+HAL_StatusTypeDef ADS124_WriteRegister(ADS124_HandleTypeDef *hadc,
+                                       uint8_t start_addr,
+                                       uint8_t *data, uint8_t n_regs);
+
+/**
+ * @brief  Read one or more registers
+ * @param  start_addr  Register address to start (0–0x0F)
+ * @param  data        Pointer to buffer for read data
+ * @param  n_regs      Number of registers to read
+ */
+HAL_StatusTypeDef ADS124_ReadRegister(ADS124_HandleTypeDef *hadc,
+                                      uint8_t start_addr,
+                                      uint8_t *data, uint8_t n_regs);
+
+/**
+ * @brief  Read a single 24-bit conversion.
+ *          Polls DRDY low, then issues RDATA and returns raw signed 24-bit value.
+ */
+HAL_StatusTypeDef ADS124_ReadConversion(ADS124_HandleTypeDef *hadc, int32_t *out);
+
+/**
+ * @brief  Perform a RESET via command, then wait the required td(RSSC) before returning.
+ */
+HAL_StatusTypeDef ADS124_Reset(ADS124_HandleTypeDef *hadc);
+
+#endif /* INC_ADS124S06_H_ */
